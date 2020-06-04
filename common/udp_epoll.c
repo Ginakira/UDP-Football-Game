@@ -16,6 +16,7 @@ void add_event(int epollfd, int fd, int events) {
     ev.events = events;
     ev.data.fd = fd;
     epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
+    DBG(YELLOW "EPOLL" NONE " : After Epoll Add.\n");
     return;
 }
 
@@ -38,7 +39,8 @@ int udp_connect(int epollfd, struct sockaddr_in * serveraddr) {
         return -1;
     }
     DBG(GREEN "INFO" NONE " : After connect.\n");
-    send(sockfd, "Logged!", sizeof("Logged!"), 0);
+    int ret = send(sockfd, "Logged!", sizeof("Logged!"), 0);
+    DBG(RED "RET= %d\n" NONE, ret);
     add_event(epollfd, sockfd, EPOLLIN);
     return sockfd;
 }

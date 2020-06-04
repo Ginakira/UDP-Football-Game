@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
     DBG(GREEN "INFO" NONE " : Server start on Port %d\n", port);
 
-    pthread_create(&draw_t, NULL, draw, NULL);
+    //pthread_create(&draw_t, NULL, draw, NULL);
 
     epoll_fd = epoll_create(MAX * 2);
 
