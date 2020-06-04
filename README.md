@@ -1,2 +1,2 @@
 # UDP-Football-Game
-A football game on terminal based on ncurses and UDP
+A terminal football game based on ncurses and UDP
