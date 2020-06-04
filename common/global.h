@@ -1,12 +1,12 @@
 /************************************************************
-    File Name : udp_client.h
+    File Name : global.h
     Author: Ginakira
     Mail: ginakira@outlook.com
     Github: https://github.com/Ginakira
-    Created Time: 2020/06/04 18:55:47
+    Created Time: 2020/06/04 19:32:21
 ************************************************************/
 
-#ifndef _UDP_CLIENT_H
-#define _UDP_CLIENT_H
-int socket_udp();
+#ifndef _GLOBAL_H
+#define _GLOBAL_H
+extern char conf_ans[50];
 #endif

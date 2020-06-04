@@ -6,10 +6,10 @@
     Created Time: 2020/06/02 18:13:42
 ************************************************************/
 
-#include "../common/color.h"
 #include "../common/common.h"
 #include "../common/head.h"
 #include "../common/udp_server.h"
+#include "../common/udp_epoll.h"
 #include "../game.h"
 
 char *conf = "./server.conf";
@@ -83,6 +83,9 @@ int main(int argc, char **argv) {
         int nfds = epoll_wait(epoll_fd, events, MAX * 2, -1);
 
         for (int i = 0; i < nfds; ++i) {
+            if (events[i].data.fd == listener) {
+                udp_accept(epoll_fd, listener);
+            }
             char info[1024] = {0};
             recvfrom(events[i].data.fd, (void *)&lg, sizeof(lg), 0,
                      (struct sockaddr *)&client, &len);

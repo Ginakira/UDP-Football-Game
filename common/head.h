@@ -24,4 +24,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "./global.h"
+#include "./color.h"
 #endif
