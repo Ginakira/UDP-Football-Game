@@ -37,6 +37,8 @@ int udp_connect(int epollfd, struct sockaddr_in * serveraddr) {
         perror("connect");
         return -1;
     }
+    DBG(GREEN "INFO" NONE " : After connect.\n");
+    send(sockfd, "Logged!", sizeof("Logged!"), 0);
     add_event(epollfd, sockfd, EPOLLIN);
     return sockfd;
 }
@@ -50,7 +52,9 @@ int udp_accept(int epollfd, int fd) {
     if (ret < 0) {
         return -1;
     }
-    DBG(GREEN"INFO"NONE" : %s : %d login!\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+    DBG(GREEN "INFO" NONE " : %s : %d login!\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+    DBG(PINK "RECV" NONE ": %s\n", msg);
+
     new_fd = udp_connect(epollfd, &client);
     return new_fd;
 }

@@ -80,18 +80,23 @@ int main(int argc, char **argv) {
 
     while (1) {
         w_gotoxy_puts(Message, 1, 1, "Waiting for connect...");
+        wrefresh(Message);
+        DBG(YELLOW "EPOLL" NONE " : Before epoll_wait\n");
         int nfds = epoll_wait(epoll_fd, events, MAX * 2, -1);
+        DBG(YELLOW "EPOLL" NONE " : After epoll_wait\n");
+
 
         for (int i = 0; i < nfds; ++i) {
+            char buff[512] = {0};
+            DBG(YELLOW "EPOLL" NONE " : Doing with %dth fd\n", i);
             if (events[i].data.fd == listener) {
                 udp_accept(epoll_fd, listener);
+            } else {
+                recv(events[i].data.fd, buff, sizeof(buff), 0);
+                printf(PINK "RECV" NONE " : %s\n", buff);
             }
-            char info[1024] = {0};
-            recvfrom(events[i].data.fd, (void *)&lg, sizeof(lg), 0,
-                     (struct sockaddr *)&client, &len);
-            sprintf(info, "Login: %s:%d\n", inet_ntoa(client.sin_addr),
-                    ntohs(client.sin_port));
-            w_gotoxy_puts(Message, 1, 2, info);
+            // char info[1024] = {0};
+            // w_gotoxy_puts(Message, 1, 2, info);
         }
     }
     return 0;

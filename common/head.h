@@ -26,4 +26,5 @@
 #include <unistd.h>
 #include "./global.h"
 #include "./color.h"
+#include "./common.h"
 #endif
