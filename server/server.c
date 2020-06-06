@@ -8,8 +8,8 @@
 
 #include "../common/common.h"
 #include "../common/head.h"
-#include "../common/udp_server.h"
 #include "../common/udp_epoll.h"
+#include "../common/udp_server.h"
 #include "../game.h"
 
 char *conf = "./server.conf";
@@ -17,12 +17,13 @@ char *conf = "./server.conf";
 struct User *rteam;
 struct User *bteam;
 int data_port;
+int port = 0;
 
 pthread_t draw_t;
 // struct Map court;
 
 int main(int argc, char **argv) {
-    int opt, port = 0, listener, epoll_fd;
+    int opt, listener, epoll_fd;
     while ((opt = getopt(argc, argv, "p:")) != -1) {
         switch (opt) {
             case 'p':
@@ -59,7 +60,7 @@ int main(int argc, char **argv) {
 
     DBG(GREEN "INFO" NONE " : Server start on Port %d\n", port);
 
-    //pthread_create(&draw_t, NULL, draw, NULL);
+    // pthread_create(&draw_t, NULL, draw, NULL);
 
     epoll_fd = epoll_create(MAX * 2);
 
@@ -84,7 +85,6 @@ int main(int argc, char **argv) {
         DBG(YELLOW "EPOLL" NONE " : Before epoll_wait\n");
         int nfds = epoll_wait(epoll_fd, events, MAX * 2, -1);
         DBG(YELLOW "EPOLL" NONE " : After epoll_wait\n");
-
 
         for (int i = 0; i < nfds; ++i) {
             char buff[512] = {0};
