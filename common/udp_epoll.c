@@ -7,9 +7,9 @@
 ************************************************************/
 
 #include "./common.h"
+#include "./head.h"
 #include "./udp_client.h"
 #include "./udp_server.h"
-#include "./head.h"
 
 void add_event(int epollfd, int fd, int events) {
     struct epoll_event ev;
@@ -28,13 +28,14 @@ void del_event(int epollfd, int fd, int events) {
     return;
 }
 
-int udp_connect(int epollfd, struct sockaddr_in * serveraddr) {
+int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
     int sockfd;
     if ((sockfd = socket_udp()) < 0) {
         perror("socket_udp");
         return -1;
     }
-    if ((connect(sockfd, (struct sockaddr *)serveraddr, sizeof(struct sockaddr))) < 0) {
+    if ((connect(sockfd, (struct sockaddr *)serveraddr,
+                 sizeof(struct sockaddr))) < 0) {
         perror("connect");
         return -1;
     }
@@ -54,7 +55,8 @@ int udp_accept(int epollfd, int fd) {
     if (ret < 0) {
         return -1;
     }
-    DBG(GREEN "INFO" NONE " : %s : %d login!\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
+    DBG(GREEN "INFO" NONE " : %s : %d login!\n", inet_ntoa(client.sin_addr),
+        ntohs(client.sin_port));
     DBG(PINK "RECV" NONE ": %s\n", msg);
 
     new_fd = udp_connect(epollfd, &client);
