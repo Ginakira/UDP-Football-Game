@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <poll.h>
 #include <pthread.h>
 #include <signal.h>
@@ -17,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <sys/epoll.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -24,7 +26,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "./global.h"
+
 #include "./color.h"
 #include "./common.h"
+#include "./datatype.h"
+#include "./global.h"
 #endif

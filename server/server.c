@@ -75,9 +75,9 @@ int main(int argc, char **argv) {
     ev.data.fd = listener;
 
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener, &ev);
-    struct LogData lg;
-    struct sockaddr_in client;
-    socklen_t len = sizeof(client);
+    // struct LogRequest lg;
+    // struct sockaddr_in client;
+    // socklen_t len = sizeof(client);
 
     while (1) {
         w_gotoxy_puts(Message, 1, 1, "Waiting for connect...");

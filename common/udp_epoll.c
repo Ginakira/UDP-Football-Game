@@ -11,7 +11,7 @@
 #include "./udp_client.h"
 #include "./udp_server.h"
 
-// extern int port;
+extern int port;
 
 void add_event(int epollfd, int fd, int events) {
     struct epoll_event ev;
@@ -32,7 +32,7 @@ void del_event(int epollfd, int fd, int events) {
 
 int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
     int sockfd;
-    if ((sockfd = socket_create_udp(8888)) < 0) {
+    if ((sockfd = socket_create_udp(port)) < 0) {
         perror("socket_udp");
         return -1;
     }
@@ -42,7 +42,8 @@ int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
         return -1;
     }
     DBG(GREEN "INFO" NONE " : After connect.\n");
-    int ret = send(sockfd, "Logged!", sizeof("Logged!"), 0);
+    int ret = 0;
+    ret = send(sockfd, "Logged!", sizeof("Logged!"), 0);
     DBG(RED "RET= %d\n" NONE, ret);
     add_event(epollfd, sockfd, EPOLLIN);
     return sockfd;
@@ -51,15 +52,38 @@ int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
 int udp_accept(int epollfd, int fd) {
     struct sockaddr_in client;
     int new_fd, ret;
-    char msg[512] = {0};
+    struct LogRequest request;
+    struct LogResponse response;
+
+    bzero(&request, sizeof(request));
+    bzero(&response, sizeof(response));
+
     socklen_t len = sizeof(struct sockaddr_in);
-    ret = recvfrom(fd, msg, sizeof(msg), 0, (struct sockaddr *)&client, &len);
-    if (ret < 0) {
+    ret = recvfrom(fd, (void *)&request, sizeof(request), 0,
+                   (struct sockaddr *)&client, &len);
+    if (ret != sizeof(request)) {
+        response.type = 1;  // Unsuccessful
+        strcpy(response.msg, "Login failed. The packet is incomplete!");
+        sendto(fd, (void *)&response, sizeof(response), 0,
+               (struct sockaddr *)&client, len);
+
         return -1;
     }
-    DBG(GREEN "INFO" NONE " : %s : %d login!\n", inet_ntoa(client.sin_addr),
-        ntohs(client.sin_port));
-    DBG(PINK "RECV" NONE ": %s\n", msg);
+
+    response.type = 0;
+    strcpy(response.msg, "Login success. Enjoy yourself.");
+    sendto(fd, (void *)&response, sizeof(response), 0,
+           (struct sockaddr *)&client, len);
+
+    if (request.team) {  // Team is blue
+        DBG(GREEN "INFO" NONE " : " BLUE " %s on %s:%d login! (%s)\n" NONE,
+            request.name, inet_ntoa(client.sin_addr), ntohs(client.sin_port),
+            request.msg);
+    } else {
+        DBG(GREEN "INFO" NONE " : " RED " %s on %s:%d login! (%s)\n" NONE,
+            request.name, inet_ntoa(client.sin_addr), ntohs(client.sin_port),
+            request.msg);
+    }
 
     new_fd = udp_connect(epollfd, &client);
     return new_fd;
