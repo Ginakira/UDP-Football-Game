@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
         request.msg);
 
     if ((sockfd = socket_udp()) < 0) {
-        perror("scoket_udp");
+        perror("socket_udp");
         exit(1);
     }
 
