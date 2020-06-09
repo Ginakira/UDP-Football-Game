@@ -25,6 +25,7 @@ int socket_create_udp(int port) {
     int opt = 1;
     setsockopt(server_listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+    make_nonblock(server_listen);
     if (bind(server_listen, (struct sockaddr *)&server, sizeof(server)) < 0) {
         return -1;
     }

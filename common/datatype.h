@@ -9,6 +9,8 @@
 #ifndef _DATATYPE_H
 #define _DATATYPE_H
 
+#define MAXMSG 1024
+
 struct LogRequest {
     char name[20];
     int team;  // 0 RED 1 BLUE
@@ -26,9 +28,9 @@ struct Point {
 
 struct User {
     int team;
+    int fd;
+    int flag;  // 未响应的次数
     char name[20];
-    int flag;                  // 未响应的次数
-    struct sockaddr_in *addr;  // MAYBE BUG
     struct Point loc;
 };
 
@@ -49,6 +51,17 @@ struct TransMsg {
     int dirx;
     int diry;
     struct Ctrl ctrl;
+};
+
+#define FT_TEST 0x01  // 心跳
+#define FT_WALL 0x02  // 广播
+#define FT_MSG 0x04
+#define FT_ACK 0x08
+
+struct FootBallMsg {
+    int type;
+    int size;
+    char msg[MAXMSG];
 };
 
 #endif
