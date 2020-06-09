@@ -30,6 +30,7 @@ struct User {
     int team;
     int fd;
     int flag;  // 未响应的次数
+    int online;
     char name[20];
     struct Point loc;
 };
