@@ -59,7 +59,6 @@ int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
     int ret = 0;
     ret = send(sockfd, "Logged!", sizeof("Logged!"), 0);
     DBG(RED "RET= %d\n" NONE, ret);
-    add_event(epollfd, sockfd, EPOLLIN);
     return sockfd;
 }
 

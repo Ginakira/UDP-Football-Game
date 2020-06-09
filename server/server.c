@@ -7,6 +7,8 @@
 ************************************************************/
 
 #include "../common/head.h"
+#include "../common/heart_beat.h"
+#include "../common/sub_reactor.h"
 #include "../common/thread_pool.h"
 #include "../common/udp_epoll.h"
 #include "../common/udp_server.h"
@@ -79,8 +81,8 @@ int main(int argc, char **argv) {
     task_queue_init(&blueQueue, MAX, bepollfd);
 
     pthread_create(&red_t, NULL, sub_reactor, (void *)&redQueue);
-    pthread_create(&red_t, NULL, sub_reactor, (void *)&blueQueue);
-    // pthread_create(&heart_t, NULL, heart_beat, NULL);
+    pthread_create(&blue_t, NULL, sub_reactor, (void *)&blueQueue);
+    pthread_create(&heart_t, NULL, heart_beat, NULL);
 
     struct epoll_event ev, events[MAX * 2];
     ev.events = EPOLLIN;
