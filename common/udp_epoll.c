@@ -56,6 +56,15 @@ int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
     return sockfd;
 }
 
+// 检查全场是否有同名用户已经登录 有则返回1 否则0
+int check_online(struct LogRequest *request) {
+    for (int i = 0; i < MAX; ++i) {
+        if (rteam[i].online && strcmp(rteam[i].name, request->name)) return 1;
+        if (bteam[i].online && strcmp(bteam[i].name, request->name)) return 1;
+    }
+    return 0;
+}
+
 int udp_accept(int epollfd, int fd, struct User *user) {
     struct sockaddr_in client;
     int new_fd, ret;
@@ -70,10 +79,19 @@ int udp_accept(int epollfd, int fd, struct User *user) {
                    (struct sockaddr *)&client, &len);
     if (ret != sizeof(request)) {
         response.type = 1;  // Unsuccessful
-        strcpy(response.msg, "Login failed. The packet is incomplete!");
+        strcpy(response.msg, "Login failed. Network error!");
         sendto(fd, (void *)&response, sizeof(response), 0,
                (struct sockaddr *)&client, len);
 
+        return -1;
+    }
+
+    // 防止同名用户重复上线
+    if (check_online(&request)) {
+        response.type = 1;
+        strcpy(response.msg, "You are already online!");
+        sendto(fd, (void *)&response, sizeof(response), 0,
+               (struct sockaddr *)&client, len);
         return -1;
     }
 
