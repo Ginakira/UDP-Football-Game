@@ -119,23 +119,16 @@ void show_message(WINDOW *win, struct User *user, char *msg, int type) {
         sprintf(username, "%s : ", user->name);
     }
 
-    if (message_num < 4) {
-        w_gotoxy_puts(win, 10, message_num, username);
-        wattron(win, COLOR_PAIR(3));
-        w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
-        wattron(win, COLOR_PAIR(5));
-        w_gotoxy_puts(win, 1, message_num, timestr);
-        message_num++;
-    } else {
+    if (message_num > 4) {
         message_num = 4;
         scroll(win);
-        w_gotoxy_puts(win, 10, message_num, username);
-        wattron(win, COLOR_PAIR(3));
-        w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
-        wattron(win, COLOR_PAIR(5));
-        w_gotoxy_puts(win, 1, message_num, timestr);
-        message_num++;
     }
+    w_gotoxy_puts(win, 10, message_num, username);
+    wattron(win, COLOR_PAIR(3));
+    w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
+    wattron(win, COLOR_PAIR(5));
+    w_gotoxy_puts(win, 1, message_num, timestr);
+    message_num++;
     wrefresh(win);
     return;
 }
