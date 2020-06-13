@@ -16,7 +16,7 @@ int socket_create_udp(int port) {
         return -1;
     }
 
-    printf(BLUE "UDP Socket created." NONE "\n");
+    // printf(BLUE "UDP Socket created." NONE "\n");
     struct sockaddr_in server;
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
@@ -30,8 +30,8 @@ int socket_create_udp(int port) {
         return -1;
     }
 
-    printf(GREEN "UDP Socket binded." NONE "\n");
-    printf(PINK "UDP Server listening..." NONE "\n");
+    // printf(GREEN "UDP Socket binded." NONE "\n");
+    // printf(PINK "UDP Server listening..." NONE "\n");
 
     return server_listen;
 }

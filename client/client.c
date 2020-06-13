@@ -7,6 +7,7 @@
 ************************************************************/
 
 #include "../common/client_recver.h"
+#include "../common/game.h"
 #include "../common/head.h"
 #include "../common/udp_client.h"
 
@@ -25,7 +26,7 @@ void logout(int signum) {
 
 int main(int argc, char **argv) {
     int opt;
-    pthread_t recv_t;
+    pthread_t recv_t, draw_t;
     struct LogRequest request;
     struct LogResponse response;
     bzero(&request, sizeof(request));
@@ -66,6 +67,11 @@ int main(int argc, char **argv) {
     if (!strlen(request.name)) strcpy(request.name, get_value(conf, "NAME"));
     if (!strlen(request.msg)) strcpy(request.msg, get_value(conf, "LOGMSG"));
     if (!request.team) request.team = atoi(get_value(conf, "TEAM"));
+
+    court.width = atoi(get_value(conf, "COLS"));
+    court.height = atoi(get_value(conf, "LINES"));
+    court.start.x = 1;
+    court.start.y = 1;
 
     signal(SIGINT, logout);
 
@@ -119,6 +125,10 @@ int main(int argc, char **argv) {
 
     DBG(GREEN "SERVER : " NONE " %s \n", response.msg);
     connect(sockfd, (struct sockaddr *)&server, len);
+
+#ifndef _D
+    pthread_create(&draw_t, NULL, draw, NULL);
+#endif
 
     pthread_create(&recv_t, NULL, client_recv, NULL);
     while (1) {

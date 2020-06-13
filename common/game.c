@@ -1,22 +1,16 @@
 /************************************************************
-    File Name : game.h
+    File Name : game.c
     Author: Ginakira
     Mail: ginakira@outlook.com
     Github: https://github.com/Ginakira
-    Created Time: 2020/06/02 18:35:46
+    Created Time: 2020/06/13 18:22:12
 ************************************************************/
 
-#ifndef _GAME_H
-#define _GAME_H
-#include <curses.h>
+#include "game.h"
 
-#include "common/head.h"
+extern struct Map court;
 
-#define MAX 50  // 最大游戏人数/队
-
-struct Map court;
-
-WINDOW *Football, *Message, *Help, *Score, *Write;
+extern WINDOW *Football, *Message, *Help, *Score, *Write;
 
 WINDOW *create_newwin(int width, int height, int start_x, int start_y) {
     WINDOW *win;
@@ -103,5 +97,3 @@ void *draw(void *arg) {
     }
     return NULL;
 }
-
-#endif

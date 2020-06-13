@@ -6,6 +6,7 @@
     Created Time: 2020/06/02 18:13:42
 ************************************************************/
 
+#include "../common/game.h"
 #include "../common/head.h"
 #include "../common/heart_beat.h"
 #include "../common/server_exit.h"
@@ -13,7 +14,6 @@
 #include "../common/thread_pool.h"
 #include "../common/udp_epoll.h"
 #include "../common/udp_server.h"
-#include "../game.h"
 
 char *conf = "./server.conf";
 
@@ -61,7 +61,9 @@ int main(int argc, char **argv) {
 
     DBG(GREEN "INFO" NONE " : Server start on Port %d\n", port);
 
-    // pthread_create(&draw_t, NULL, draw, NULL);
+#ifndef _D
+    pthread_create(&draw_t, NULL, draw, NULL);
+#endif
 
     epoll_fd = epoll_create(MAX * 2);
     repollfd = epoll_create(MAX);
