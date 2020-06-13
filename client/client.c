@@ -133,13 +133,14 @@ int main(int argc, char **argv) {
     pthread_create(&recv_t, NULL, client_recv, NULL);
     while (1) {
         struct FootBallMsg msg;
+        bzero(&msg, sizeof(msg));
         msg.type = FT_MSG;
         DBG(YELLOW "Input Message : " NONE);
-        fflush(stdout);
-        memset(msg.msg, 0, sizeof(msg.msg));
-        scanf("%[^\n]s", msg.msg);
-        getchar();
-        send(sockfd, (void *)&msg, sizeof(msg), 0);
+        w_gotoxy_puts(Write, 1, 1, "Input Message: ");
+        mvwscanw(Write, 2, 1, "%[^\n]s", msg.msg);
+        if (strlen(msg.msg)) {
+            send(sockfd, (void *)&msg, sizeof(msg), 0);
+        }
     }
 
     sleep(10);
