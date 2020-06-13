@@ -8,6 +8,7 @@
 #ifndef HEAD_H
 #define HEAD_H
 #include <arpa/inet.h>
+#include <curses.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
