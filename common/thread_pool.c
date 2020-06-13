@@ -8,16 +8,18 @@
 
 #include "thread_pool.h"
 
+#include "game.h"
 #include "udp_epoll.h"
 
 extern int repollfd, bepollfd;
 
 void do_echo(struct User *user) {
     struct FootBallMsg msg;
+    char tmp[512] = {0};
     int size = recv(user->fd, (void *)&msg, sizeof(msg), 0);
     user->flag = 10;
-    if (msg.type & FT_ACK) {
-        if (user->team) {  // Blue Team
+    if (msg.type & FT_ACK) {  // 客户端心跳回执
+        if (user->team) {     // Blue Team
             DBG(L_BLUE " %s " NONE "❤️\n", user->name);
         } else {
             DBG(L_RED " %s " NONE "❤️\n", user->name);
@@ -28,12 +30,17 @@ void do_echo(struct User *user) {
         } else {
             DBG(L_RED " %s : %s" NONE "\n", user->name, msg.msg);
         }
+        strcpy(msg.name, user->name);
+        msg.team = user->team;
+        Show_Message(, user, msg.msg, );
         send(user->fd, (void *)&msg, sizeof(msg), 0);
-    } else if (msg.type & FT_FIN) {
+    } else if (msg.type & FT_FIN) {  // 客户端下线信息
         DBG(RED "%s logout" NONE "\n", user->name);
+        sprintf(tmp, "%s logout!", user->name);
         user->online = 0;
         int epollfd_tmp = (user->team ? bepollfd : repollfd);
         del_event(epollfd_tmp, user->fd);
+        Show_Message(, NULL, tmp, 1);
     }
     return;
 }
