@@ -9,12 +9,15 @@
 #include "../common/client_recver.h"
 #include "../common/game.h"
 #include "../common/head.h"
+#include "../common/send_chat.h"
 #include "../common/udp_client.h"
 
 char server_ip[20] = {0};
 int server_port = 0;
-int sockfd;
 char *conf = "./football.conf";
+struct FootBallMsg chat_msg;
+struct FootBallMsg ctl_msg;
+int sockfd;
 
 void logout(int signum) {
     struct FootBallMsg msg;
@@ -30,6 +33,12 @@ int main(int argc, char **argv) {
     struct LogRequest request;
     struct LogResponse response;
     bzero(&request, sizeof(request));
+    bzero(&chat_msg, sizeof(struct FootBallMsg));
+    bzero(&ctl_msg, sizeof(struct FootBallMsg));
+
+    chat_msg.type = FT_MSG;
+    ctl_msg.type = FT_CTL;
+
     while ((opt = getopt(argc, argv, "h:p:n:t:m:")) != -1) {
         switch (opt) {
             case 'h': {
@@ -131,15 +140,40 @@ int main(int argc, char **argv) {
 #endif
 
     pthread_create(&recv_t, NULL, client_recv, NULL);
+
+    // 定时发送控制数据包
+    // signal(SIGALRM, send_ctl);
+
+    // struct itimerval itimer;  // 间隔计时器
+    // itimer.it_interval.tv_sec = 0;
+    // itimer.it_interval.tv_usec = 100000;
+    // itimer.it_value.tv_sec = 0;
+    // itimer.it_value.tv_usec = 100000;
+    // setitimer(ITIMER_REAL, &itimer, NULL);
+
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
     while (1) {
-        struct FootBallMsg msg;
-        bzero(&msg, sizeof(msg));
-        msg.type = FT_MSG;
-        DBG(YELLOW "Input Message : " NONE);
-        w_gotoxy_puts(Write, 1, 1, "Input Message: ");
-        mvwscanw(Write, 2, 1, "%[^\n]s", msg.msg);
-        if (strlen(msg.msg)) {
-            send(sockfd, (void *)&msg, sizeof(msg), 0);
+        int c = getchar();
+        switch (c) {
+            case KEY_LEFT: {
+                ctl_msg.ctl.dirx -= 2;
+            } break;
+            case KEY_RIGHT: {
+                ctl_msg.ctl.dirx += 2;
+            } break;
+            case KEY_UP: {
+                ctl_msg.ctl.diry -= 2;
+            } break;
+            case KEY_DOWN: {
+                ctl_msg.ctl.diry += 2;
+            } break;
+            case '\r': {
+                send_chat();
+            } break;
+            default:
+                break;
         }
     }
 
