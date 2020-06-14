@@ -10,6 +10,7 @@
 #include "../common/game.h"
 #include "../common/head.h"
 #include "../common/send_chat.h"
+#include "../common/send_ctl.h"
 #include "../common/udp_client.h"
 
 char server_ip[20] = {0};
@@ -142,14 +143,14 @@ int main(int argc, char **argv) {
     pthread_create(&recv_t, NULL, client_recv, NULL);
 
     // 定时发送控制数据包
-    // signal(SIGALRM, send_ctl);
+    signal(SIGALRM, send_ctl);
 
-    // struct itimerval itimer;  // 间隔计时器
-    // itimer.it_interval.tv_sec = 0;
-    // itimer.it_interval.tv_usec = 100000;
-    // itimer.it_value.tv_sec = 0;
-    // itimer.it_value.tv_usec = 100000;
-    // setitimer(ITIMER_REAL, &itimer, NULL);
+    struct itimerval itimer;  // 间隔计时器
+    itimer.it_interval.tv_sec = 0;
+    itimer.it_interval.tv_usec = 100000;
+    itimer.it_value.tv_sec = 0;
+    itimer.it_value.tv_usec = 100000;
+    setitimer(ITIMER_REAL, &itimer, NULL);
 
     noecho();
     cbreak();
@@ -157,17 +158,17 @@ int main(int argc, char **argv) {
     while (1) {
         int c = getchar();
         switch (c) {
-            case KEY_LEFT: {
+            case 'a': {
                 ctl_msg.ctl.dirx -= 2;
             } break;
-            case KEY_RIGHT: {
+            case 'd': {
                 ctl_msg.ctl.dirx += 2;
             } break;
-            case KEY_UP: {
-                ctl_msg.ctl.diry -= 2;
+            case 'w': {
+                ctl_msg.ctl.diry -= 1;
             } break;
-            case KEY_DOWN: {
-                ctl_msg.ctl.diry += 2;
+            case 's': {
+                ctl_msg.ctl.diry += 1;
             } break;
             case '\r': {
                 send_chat();

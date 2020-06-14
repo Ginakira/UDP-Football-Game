@@ -10,6 +10,7 @@
 #include "../common/head.h"
 #include "../common/heart_beat.h"
 #include "../common/server_exit.h"
+#include "../common/server_re_draw.h"
 #include "../common/sub_reactor.h"
 #include "../common/thread_pool.h"
 #include "../common/udp_epoll.h"
@@ -93,6 +94,16 @@ int main(int argc, char **argv) {
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener, &ev);
     struct sockaddr_in client;
     socklen_t len = sizeof(client);
+
+    // 定时重绘
+    signal(SIGALRM, re_draw);
+
+    struct itimerval itimer;
+    itimer.it_interval.tv_sec = 0;
+    itimer.it_interval.tv_usec = 50000;
+    itimer.it_value.tv_sec = 5;
+    itimer.it_value.tv_usec = 0;
+    setitimer(ITIMER_REAL, &itimer, NULL);
 
     Show_Message(, , "Waiting for login...", 1);
     while (1) {

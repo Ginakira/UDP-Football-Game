@@ -41,10 +41,17 @@ void do_echo(struct User *user) {
         int epollfd_tmp = (user->team ? bepollfd : repollfd);
         del_event(epollfd_tmp, user->fd);
         Show_Message(, NULL, tmp, 1);
+    } else if (msg.type & FT_CTL) {  // 客户端控制信息
+        Show_Message(, user, "Ctrl Messgae", 0);
+        if (!msg.ctl.dirx && !msg.ctl.diry) return;
+        // 边界判断
+        int tmpx = user->loc.x + msg.ctl.dirx,
+            tmpy = user->loc.y + msg.ctl.diry;
+        if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
+        if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
     }
     return;
 }
-
 void task_queue_init(struct task_queue *taskQueue, int sum, int epollfd) {
     taskQueue->sum = sum;
     taskQueue->epollfd = epollfd;
