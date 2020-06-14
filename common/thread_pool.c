@@ -42,6 +42,11 @@ void do_echo(struct User *user) {
         int epollfd_tmp = (user->team ? bepollfd : repollfd);
         del_event(epollfd_tmp, user->fd);
         Show_Message(, NULL, tmp, 1);
+    } else if (msg.type & FT_CTL) {
+        sprintf(tmp, "%s send a ctl_msg: dx=%d dy=%d", user->name, msg.ctl.dirx,
+                msg.ctl.diry);
+        draw_player(user, msg.ctl.dirx, msg.ctl.diry);
+        if (msg.ctl.dirx || msg.ctl.diry) Show_Message(, NULL, tmp, 1);
     }
     return;
 }

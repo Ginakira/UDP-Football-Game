@@ -10,6 +10,7 @@
 #include "./head.h"
 #include "./udp_client.h"
 #include "./udp_server.h"
+#include "game.h"
 
 #define MAX 50
 
@@ -130,6 +131,9 @@ void add_to_sub_reactor(struct User *user) {
     team[sub] = *user;
     team[sub].online = 1;
     team[sub].flag = 10;
+    team[sub].loc.x = rand() % court.width;
+    team[sub].loc.y = rand() % court.height;
+    draw_player(&team[sub], 0, 0);
     DBG(L_RED "sub = %d, name = %s" NONE "\n", sub, team[sub].name);
     if (user->team) {  // Blue Team
         add_event_ptr(bepollfd, team[sub].fd, EPOLLIN | EPOLLET, &team[sub]);

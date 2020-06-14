@@ -25,6 +25,7 @@ int repollfd, bepollfd;
 // struct Map court;
 
 int main(int argc, char **argv) {
+    srand(time(0));
     int opt, listener, epoll_fd;
     pthread_t draw_t, red_t, blue_t, heart_t;
     while ((opt = getopt(argc, argv, "p:")) != -1) {

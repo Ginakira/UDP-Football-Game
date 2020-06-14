@@ -36,5 +36,6 @@ void show_message(WINDOW *win, struct User *user, char *msg, int type);
 
 void init_football();
 void *draw(void *arg);
+void draw_player(struct User *user, int dx, int dy);
 
 #endif

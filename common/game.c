@@ -132,3 +132,21 @@ void show_message(WINDOW *win, struct User *user, char *msg, int type) {
     wrefresh(win);
     return;
 }
+
+void draw_player(struct User *user, int dx, int dy) {
+    w_gotoxy_putc(Football, user->loc.x, user->loc.y, ' ');
+
+    if (user->team) {  // Blue team
+        wattron(Football, COLOR_PAIR(6));
+    } else {
+        wattron(Football, COLOR_PAIR(2));
+    }
+
+    int tmpx = user->loc.x + dx, tmpy = user->loc.y + dy;
+    if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
+    if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
+
+    w_gotoxy_putc(Football, user->loc.x, user->loc.y, 'o');
+    wrefresh(Football);
+    return;
+}
