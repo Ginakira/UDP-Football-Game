@@ -21,7 +21,7 @@ void send_chat() {
     if (strlen(chat_msg.msg)) {
         send(sockfd, (void *)&chat_msg, sizeof(chat_msg), 0);
     }
-    wclear(Write);
+    werase(Write);
     box(Write, 0, 0);
     wrefresh(Write);
     noecho();

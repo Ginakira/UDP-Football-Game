@@ -138,3 +138,14 @@ void add_to_sub_reactor(struct User *user) {
     }
     return;
 }
+
+void broadcast(char *str) {
+    struct FootBallMsg msg;
+    msg.type = FT_WALL;
+    strcpy(msg.msg, str);
+    for (int i = 0; i < MAX; ++i) {
+        if (rteam[i].online) send(rteam[i].fd, (void *)&msg, sizeof(msg), 0);
+        if (bteam[i].online) send(bteam[i].fd, (void *)&msg, sizeof(msg), 0);
+    }
+    return;
+}
