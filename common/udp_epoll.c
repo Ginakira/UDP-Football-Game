@@ -59,8 +59,8 @@ int udp_connect(int epollfd, struct sockaddr_in *serveraddr) {
 // 检查全场是否有同名用户已经登录 有则返回1 否则0
 int check_online(struct LogRequest *request) {
     for (int i = 0; i < MAX; ++i) {
-        if (rteam[i].online && strcmp(rteam[i].name, request->name)) return 1;
-        if (bteam[i].online && strcmp(bteam[i].name, request->name)) return 1;
+        if (rteam[i].online && !strcmp(rteam[i].name, request->name)) return 1;
+        if (bteam[i].online && !strcmp(bteam[i].name, request->name)) return 1;
     }
     return 0;
 }
