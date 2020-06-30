@@ -32,9 +32,12 @@ void re_draw_team(struct User *team) {
 }
 
 void re_draw() {
-    wclear(Football);
+    wclear(Football_t);
+    box(Football_t, 0, 0);
     box(Football, 0, 0);
     re_draw_team(rteam);
     re_draw_team(bteam);
+    wrefresh(Football_t);
+    wrefresh(0);
     return;
 }

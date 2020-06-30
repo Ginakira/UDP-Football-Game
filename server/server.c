@@ -11,6 +11,7 @@
 #include "../common/heart_beat.h"
 #include "../common/server_exit.h"
 #include "../common/server_re_draw.h"
+#include "../common/show_data_stream.h"
 #include "../common/sub_reactor.h"
 #include "../common/thread_pool.h"
 #include "../common/udp_epoll.h"
@@ -49,8 +50,8 @@ int main(int argc, char **argv) {
     if (!port) port = atoi(get_value(conf, "PORT"));
     court.width = atoi(get_value(conf, "COLS"));
     court.height = atoi(get_value(conf, "LINES"));
-    court.start.x = 1;
-    court.start.y = 1;
+    court.start.x = 3;
+    court.start.y = 2;
 
     rteam = (struct User *)calloc(MAX, sizeof(struct User));
     bteam = (struct User *)calloc(MAX, sizeof(struct User));
@@ -123,6 +124,7 @@ int main(int argc, char **argv) {
                                " : Add %s to %s sub_reactor.\n",
                         user.name, (user.team ? "BLUE" : "RED"));
                     add_to_sub_reactor(&user);
+                    show_data_stream('l');
                     Show_Message(, , buff, 1);
                 }
             } else {

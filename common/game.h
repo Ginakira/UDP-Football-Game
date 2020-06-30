@@ -22,7 +22,9 @@
 
 struct Map court;
 
-WINDOW *Football, *Message, *Help, *Score, *Write;
+WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
+
+char data_stream[20];
 
 WINDOW *create_newwin(int width, int height, int start_x, int start_y);
 void destory_win(WINDOW *win);

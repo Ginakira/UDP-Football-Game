@@ -9,6 +9,7 @@
 #include "thread_pool.h"
 
 #include "game.h"
+#include "show_data_stream.h"
 #include "udp_epoll.h"
 
 extern int repollfd, bepollfd;
@@ -42,6 +43,7 @@ void do_echo(struct User *user) {
         del_event(epollfd_tmp, user->fd);
         Show_Message(, NULL, tmp, 1);
     } else if (msg.type & FT_CTL) {  // 客户端控制信息
+        show_data_stream('n');
         Show_Message(, user, "Ctrl Messgae", 0);
         if (!msg.ctl.dirx && !msg.ctl.diry) return;
         // 边界判断
