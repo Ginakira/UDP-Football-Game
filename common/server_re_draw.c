@@ -38,6 +38,5 @@ void re_draw() {
     re_draw_team(rteam);
     re_draw_team(bteam);
     wrefresh(Football_t);
-    wrefresh(0);
     return;
 }
