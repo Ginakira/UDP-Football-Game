@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 
     struct itimerval itimer;
     itimer.it_interval.tv_sec = 0;
-    itimer.it_interval.tv_usec = 50000;
+    itimer.it_interval.tv_usec = 100000;
     itimer.it_value.tv_sec = 5;
     itimer.it_value.tv_usec = 0;
     setitimer(ITIMER_REAL, &itimer, NULL);
