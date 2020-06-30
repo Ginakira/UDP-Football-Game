@@ -50,6 +50,5 @@ void show_strength() {
     }
     int arr[5] = {1, 2, 3, 2, 1};
     strength = arr[mousex / 5];
-    
     return;
 }
