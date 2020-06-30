@@ -26,6 +26,10 @@ struct Point {
     int x, y;
 };
 
+struct Bpoint {
+    double x, y;
+};
+
 struct User {
     int team;
     int fd;
@@ -43,11 +47,14 @@ struct Map {
     int gate_height;
 };
 
+#define ACTION_KICK 0x01
+#define ACTION_CARRY 0x02
+#define ACTION_STOP 0x04
 struct Ctrl {
-    int carry;
-    int kick;
+    int action;
     int dirx;
     int diry;
+    int strength;
 };
 
 #define FT_TEST 0x01   // 服务端发送的心跳信息
@@ -67,6 +74,22 @@ struct FootBallMsg {
     char name[20];
     struct Ctrl ctl;
     char msg[MAXMSG];
+};
+
+struct Aspeed {
+    double x, y;
+};
+
+struct Speed {
+    double x, y;
+};
+
+struct BallStatus {
+    struct Speed v;
+    struct Aspeed a;
+    int t;
+    int who;
+    // pthread_mutex_t mutex;
 };
 
 #endif

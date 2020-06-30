@@ -97,7 +97,7 @@ void init_football() {
                          court.start.y - 1);
     Score = create_newwin(20, 7, court.start.x + court.width + 2,
                           court.start.y + court.height + 1);
-    Write = create_newwin(court.width + 20, 5, court.start.x - 2,
+    Write = create_newwin(court.width + 24, 5, court.start.x - 2,
                           court.start.y + court.height + 8);
     return;
 }
