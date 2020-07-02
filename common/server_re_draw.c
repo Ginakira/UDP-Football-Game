@@ -29,9 +29,6 @@ void re_draw_player(int team, char *name, struct Point *loc) {
 void re_draw_team(struct User *team) {
     for (int i = 0; i < MAX; ++i) {
         if (!team[i].online) continue;
-        char buff[50] = {0};
-        sprintf(buff, "draw user loc:x-%d y-%d", team[i].loc.x, team[i].loc.y);
-        Show_Message(, , buff, 1);
         re_draw_player(team[i].team, team[i].name, &team[i].loc);
     }
 }
@@ -43,6 +40,9 @@ void re_draw_ball() {
         ball.y = ball.y + ball_status.v.y * t + 0.5 * ball_status.a.y * t * t;
         ball_status.v.x += ball_status.a.x * t;
         ball_status.v.y += ball_status.a.y * t;
+        char buff[100] = {0};
+        sprintf(buff, "[BALL]x=%d, y = %d", (int)ball.x, (int)ball.y);
+        Show_Message(, , buff, 1);
     }
     w_gotoxy_putc(Football, (int)ball.x, (int)ball.y, 'o');
     return;

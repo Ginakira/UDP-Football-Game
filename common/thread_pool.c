@@ -56,7 +56,11 @@ void do_echo(struct User *user) {
         }
         if (msg.ctl.action & ACTION_KICK) {
             show_data_stream('k');
-            if (can_kick(&(user->loc), msg.ctl.strength)) {
+            int ret = can_kick(&(user->loc), msg.ctl.strength);
+            char buff[50] = {0};
+            sprintf(buff, "Can kick = %d", ret);
+            Show_Message(, , buff, 1);
+            if (ret) {
                 ball_status.who = user->team;
                 strcpy(ball_status.name, user->name);
             }

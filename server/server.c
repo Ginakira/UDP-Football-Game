@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     struct itimerval itimer;
     itimer.it_interval.tv_sec = 0;
     itimer.it_interval.tv_usec = 100000;
-    itimer.it_value.tv_sec = 5;
+    itimer.it_value.tv_sec = 2;
     itimer.it_value.tv_usec = 0;
     setitimer(ITIMER_REAL, &itimer, NULL);
 
@@ -131,6 +131,11 @@ int main(int argc, char **argv) {
                         user.name, (user.team ? "BLUE" : "RED"));
                     add_to_sub_reactor(&user);
                     show_data_stream('l');
+                    Show_Message(, , buff, 1);
+
+                    char buff[100] = {0};
+                    sprintf(buff, "[INIT] ballx=%d bally=%d", (int)ball.x,
+                            (int)ball.y);
                     Show_Message(, , buff, 1);
                 }
             } else {

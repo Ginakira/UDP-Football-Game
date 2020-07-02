@@ -8,16 +8,21 @@
 
 #include <math.h>
 
+#include "game.h"
 #include "head.h"
 #define PI 3.1415926
 
 extern WINDOW *Message;
-extern struct Point ball;
+extern struct Bpoint ball;
 extern struct BallStatus ball_status;
 
 int can_kick(struct Point *loc, int strength) {
     // 因为球和人的坐标不在同一个窗口上(人可以出界) 所以先进行坐标对齐
-    int px = loc->x - 2, py = loc->y - 1;
+    int px = loc->x, py = loc->y;
+    char buff[100] = {0};
+    sprintf(buff, "[ORI]x=%d, y=%d  [FIX]x=%d, y=%d  [BALL]x=%d, y = %d",
+            loc->x, loc->y, px, py, (int)ball.x, (int)ball.y);
+    Show_Message(, , buff, 1);
     if (px == (int)ball.x && py == (int)ball.y) {
         return 0;
     }
