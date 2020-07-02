@@ -119,6 +119,7 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < nfds; ++i) {
             struct User user;
+            bzero(&user, sizeof(user));
             char buff[512] = {0};
             DBG(YELLOW "EPOLL" NONE " : Doing with %dth fd\n", i);
             if (events[i].data.fd == listener) {
