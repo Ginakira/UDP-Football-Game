@@ -23,6 +23,8 @@ struct User *rteam;
 struct User *bteam;
 int port = 0;
 int repollfd, bepollfd;
+struct Bpoint ball;
+struct BallStatus ball_status;
 
 // struct Map court;
 
@@ -52,6 +54,9 @@ int main(int argc, char **argv) {
     court.height = atoi(get_value(conf, "LINES"));
     court.start.x = 3;
     court.start.y = 2;
+
+    ball.x = court.width / 2;
+    ball.y = court.height / 2;
 
     rteam = (struct User *)calloc(MAX, sizeof(struct User));
     bteam = (struct User *)calloc(MAX, sizeof(struct User));

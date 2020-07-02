@@ -13,7 +13,7 @@ extern int sockfd;
 
 void show_strength() {
     int mousex = 2, offset = 1;
-    int maxx, maxy, strength;
+    int maxx, maxy;
     getmaxyx(Write, maxy, maxx);
     for (int i = 2; i < maxx - 2; ++i) {
         if (i < maxx / 5 || i > maxx - maxx / 5) {
@@ -49,6 +49,11 @@ void show_strength() {
         wrefresh(Write);
     }
     int arr[5] = {1, 2, 3, 2, 1};
-    strength = arr[mousex / 5];
+
+    struct FootBallMsg msg;
+    msg.type = FT_CTL;
+    msg.ctl.action = ACTION_KICK;
+    msg.ctl.strength = arr[mousex / (maxx / 5)];
+    send(sockfd, &msg, sizeof(msg), 0);
     return;
 }

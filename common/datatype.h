@@ -89,6 +89,7 @@ struct BallStatus {
     struct Aspeed a;
     int t;
     int who;
+    char name[20];
     // pthread_mutex_t mutex;
 };
 

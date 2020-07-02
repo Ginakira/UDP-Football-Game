@@ -8,11 +8,13 @@
 
 #include "thread_pool.h"
 
+#include "ball_status.h"
 #include "game.h"
 #include "show_data_stream.h"
 #include "udp_epoll.h"
 
 extern int repollfd, bepollfd;
+extern struct BallStatus ball_status;
 
 void do_echo(struct User *user) {
     struct FootBallMsg msg;
@@ -45,12 +47,20 @@ void do_echo(struct User *user) {
     } else if (msg.type & FT_CTL) {  // 客户端控制信息
         show_data_stream('n');
         Show_Message(, user, "Ctrl Messgae", 0);
-        if (!msg.ctl.dirx && !msg.ctl.diry) return;
-        // 边界判断
-        int tmpx = user->loc.x + msg.ctl.dirx,
-            tmpy = user->loc.y + msg.ctl.diry;
-        if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
-        if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
+        if (msg.ctl.dirx || msg.ctl.diry) {
+            // 边界判断
+            int tmpx = user->loc.x + msg.ctl.dirx,
+                tmpy = user->loc.y + msg.ctl.diry;
+            if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
+            if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
+        }
+        if (msg.ctl.action & ACTION_KICK) {
+            show_data_stream('k');
+            if (can_kick(&(user->loc), msg.ctl.strength)) {
+                ball_status.who = user->team;
+                strcpy(ball_status.name, user->name);
+            }
+        }
     }
     return;
 }
