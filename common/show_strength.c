@@ -55,5 +55,6 @@ void show_strength() {
     msg.ctl.action = ACTION_KICK;
     msg.ctl.strength = arr[mousex / (maxx / 5)];
     send(sockfd, &msg, sizeof(msg), 0);
+    make_block(STDIN_FILENO);
     return;
 }
