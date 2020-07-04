@@ -51,6 +51,7 @@ void show_strength() {
     int arr[5] = {1, 2, 3, 2, 1};
 
     struct FootBallMsg msg;
+    bzero(&msg, sizeof(msg));
     msg.type = FT_CTL;
     msg.ctl.action = ACTION_KICK;
     msg.ctl.strength = arr[mousex / (maxx / 5)];
