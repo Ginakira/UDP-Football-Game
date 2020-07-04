@@ -18,7 +18,7 @@ extern struct BallStatus ball_status;
 
 int can_kick(struct Point *loc, int strength) {
     // 因为球和人的坐标不在同一个窗口上(人可以出界) 所以先进行坐标对齐
-    int px = loc->x, py = loc->y;
+    int px = loc->x - 2, py = loc->y - 1;
     char buff[100] = {0};
     sprintf(buff, "[ORI]x=%d, y=%d  [FIX]x=%d, y=%d  [BALL]x=%d, y = %d",
             loc->x, loc->y, px, py, (int)ball.x, (int)ball.y);
@@ -29,13 +29,22 @@ int can_kick(struct Point *loc, int strength) {
     if (abs(px - (int)ball.x) > 2 || abs(py - (int)ball.y) > 2) {
         return 0;
     }
-    double dx =
-        (ball.x - px) / pow(pow(ball.x - px, 2) + pow(ball.y - py, 2), 0.5);
-    double dy =
-        (ball.y - py) / pow(pow(ball.x - px, 2) + pow(ball.y - py, 2), 0.5);
-    ball_status.a.x = -3 * dx;
+
+    double dis = pow(pow((int)ball.x - px, 2) + pow((int)ball.y - py, 2), 0.5);
+    double dx = ((int)ball.x - px) / dis;
+    double dy = ((int)ball.y - py) / dis;
+    double start_v = strength * 40 * 0.2;  // 初始速度力度*40 接触时间0.2
+
+    // 分解为对应坐标轴上的分量
+    ball_status.a.x = -3 * dx;  // 空气阻力3
     ball_status.a.y = -3 * dy;
-    ball_status.v.x = strength * 40 * 0.2 * dx;
-    ball_status.v.y = strength * 40 * 0.2 * dy;
+    ball_status.v.x = start_v * dx;
+    ball_status.v.y = start_v * dy;
+
+    bzero(buff, sizeof(buff));
+    sprintf(buff, "dx=%.2f, dy=%.2f, a.x=%.2f, a.y=%.2f, v.x=%.2f, v.y=%.2f",
+            dx, dy, ball_status.a.x, ball_status.a.y, ball_status.v.x,
+            ball_status.v.y);
+    Show_Message(, , buff, 1);
     return 1;
 }

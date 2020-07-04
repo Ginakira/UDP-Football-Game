@@ -48,11 +48,11 @@ void do_echo(struct User *user) {
         show_data_stream('n');
         Show_Message(, user, "Ctrl Messgae", 0);
         if (msg.ctl.dirx || msg.ctl.diry) {
-            // 边界判断
+            // 人-边界判断
             int tmpx = user->loc.x + msg.ctl.dirx,
                 tmpy = user->loc.y + msg.ctl.diry;
-            if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
-            if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
+            if (tmpx >= 0 && tmpx < court.width + 4) user->loc.x = tmpx;
+            if (tmpy >= 0 && tmpy < court.height + 2) user->loc.y = tmpy;
         }
         if (msg.ctl.action & ACTION_KICK) {
             show_data_stream('k');

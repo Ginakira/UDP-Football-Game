@@ -34,7 +34,7 @@ void show_strength() {
                 break;
             }
         }
-        usleep(5000);
+        usleep(30000);
         if (mousex >= maxx - 2) {
             offset = -1;
         } else if (mousex <= 2) {
