@@ -11,4 +11,5 @@
 void show_strength();
 void stop_ball();
 void kick_ball();
+void carry_ball();
 #endif

@@ -117,7 +117,6 @@ void init_football() {
 void *draw(void *arg) {
     init_football();
     show_help_message();
-    re_draw_score();
     while (1) {
         sleep(10);
     }

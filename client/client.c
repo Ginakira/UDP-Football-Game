@@ -181,6 +181,7 @@ int main(int argc, char **argv) {
                 kick_ball();
             } break;
             case 'l': {
+                carry_ball();
             } break;
             case ' ': {
                 show_strength();

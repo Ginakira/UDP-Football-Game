@@ -78,3 +78,12 @@ void kick_ball() {
     send(sockfd, &msg, sizeof(msg), 0);
     return;
 }
+
+void carry_ball() {
+    struct FootBallMsg msg;
+    bzero(&msg, sizeof(msg));
+    msg.type = FT_CTL;
+    msg.ctl.action = ACTION_CARRY;
+    send(sockfd, &msg, sizeof(msg), 0);
+    return;
+}

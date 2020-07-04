@@ -90,6 +90,8 @@ struct BallStatus {
     int t;
     int who;
     char name[20];
+    int is_carry;
+    struct Point relative_loc;  // 球与人相对位置（球坐标减人坐标）
     // pthread_mutex_t mutex;
 };
 

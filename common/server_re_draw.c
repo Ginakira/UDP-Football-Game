@@ -24,6 +24,15 @@ void re_draw_player(int team, char *name, struct Point *loc) {
     } else {
         wattron(Football_t, COLOR_PAIR(2));
     }
+
+    // 如果是带球人 则在其身边绘制球
+    if (ball_status.is_carry && !strcmp(ball_status.name, name)) {
+        ball.x = loc->x + ball_status.relative_loc.x;
+        ball.y = loc->y + ball_status.relative_loc.y;
+        wattron(Football, COLOR_PAIR(3));
+        w_gotoxy_putc(Football, (int)ball.x, (int)ball.y, 'o');
+    }
+
     w_gotoxy_putc(Football_t, loc->x, loc->y, p);
     w_gotoxy_puts(Football_t, loc->x + 1, loc->y - 1, name);
 }
