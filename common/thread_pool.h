@@ -24,6 +24,7 @@ struct task_queue {
     pthread_cond_t cond;
 };
 
+void send_all(struct FootBallMsg msg);
 void task_queue_init(struct task_queue *taskQueue, int sum, int epollfd);
 void task_queue_push(struct task_queue *taskQueue, struct User *user);
 struct User *task_queue_pop(struct task_queue *taskQueue);

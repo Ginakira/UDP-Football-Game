@@ -8,6 +8,8 @@
 
 #include "game.h"
 
+#include "server_re_draw.h"
+
 extern struct Map court;
 extern WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
 int message_num = 0;
@@ -115,6 +117,7 @@ void init_football() {
 void *draw(void *arg) {
     init_football();
     show_help_message();
+    re_draw_score();
     while (1) {
         sleep(10);
     }

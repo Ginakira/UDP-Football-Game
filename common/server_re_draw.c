@@ -8,12 +8,14 @@
 
 #include "game.h"
 #include "head.h"
+#include "thread_pool.h"
 #define MAX 50
 
 extern struct User *rteam, *bteam;
-extern WINDOW *Football;
+extern WINDOW *Football, *Score;
 extern struct Bpoint ball;
 extern struct BallStatus ball_status;
+extern struct Score score;
 
 void re_draw_player(int team, char *name, struct Point *loc) {
     char p = 'K';
@@ -31,6 +33,26 @@ void re_draw_team(struct User *team) {
         if (!team[i].online) continue;
         re_draw_player(team[i].team, team[i].name, &team[i].loc);
     }
+}
+
+void re_draw_score() {
+    char buff[20] = {0};
+    w_gotoxy_puts(Score, 7, 1, "Score");
+
+    sprintf(buff, "%d", score.blue);
+    wattron(Score, COLOR_PAIR(6));
+    w_gotoxy_puts(Score, 6, 3, buff);
+
+    wattron(Score, COLOR_PAIR(3));
+    w_gotoxy_putc(Score, 9, 3, '-');
+
+    sprintf(buff, "%d", score.red);
+    wattron(Score, COLOR_PAIR(2));
+    w_gotoxy_puts(Score, 12, 3, buff);
+
+    wattron(Score, COLOR_PAIR(3));
+    wrefresh(Score);
+    return;
 }
 
 void re_draw_ball() {
@@ -73,11 +95,52 @@ void re_draw_ball() {
     if (out_x || out_y) {
         ball_status.a.x = ball_status.a.y = 0;
         ball_status.v.x = ball_status.v.y = 0;
-        if (out_x) ball.x = ball.x < 0 ? 0 : court.width - 1;
+        int gate_start_y =
+            (court.height - court.gate_height) / 2;  // 球门的起始y坐标 -1修正
+
+        if (out_x) {
+            // 球是否在门的范围内
+            int ball_in_gate = (ball.y >= gate_start_y &&
+                                ball.y <= gate_start_y + court.gate_height);
+            if (ball_in_gate) {
+                if (ball.x < 0) {
+                    score.blue++;
+                } else {
+                    score.red++;
+                }
+                re_draw_score();
+                Show_Message(, , "Goal!!!!!!", 1);
+                struct FootBallMsg msg;
+                bzero(&msg, sizeof(msg));
+                msg.type = FT_WALL;
+                sprintf(msg.msg, "Goal! Blue-%d Red-%d", score.blue, score.red);
+                send_all(msg);
+
+                // 进球后球回中圈
+                ball.x = court.width / 2;
+                ball.y = court.height / 2;
+                w_gotoxy_putc(Football, (int)ball.x, (int)ball.y, 'o');
+                return;
+            }
+            ball.x = ball.x < 0 ? 0 : court.width - 1;
+        }
         if (out_y) ball.y = ball.y < 0 ? 0 : court.height - 1;
     }
 
     w_gotoxy_putc(Football, (int)ball.x, (int)ball.y, 'o');
+    return;
+}
+
+// 重绘球门
+void re_draw_gate() {
+    int start = (court.height - court.gate_height) / 2 + 1;
+    for (int i = 0; i < court.gate_height; ++i) {
+        wattron(Football_t, COLOR_PAIR(6));
+        w_gotoxy_putc(Football_t, 1, start + i, 'x');
+        wattron(Football_t, COLOR_PAIR(2));
+        w_gotoxy_putc(Football_t, court.width + 2, start + i, 'x');
+    }
+    w_gotoxy_putc(Football_t, 1, 13, 'x');
     return;
 }
 
@@ -88,6 +151,7 @@ void re_draw() {
     re_draw_ball();
     re_draw_team(rteam);
     re_draw_team(bteam);
+    re_draw_gate();
     wrefresh(Football_t);
     return;
 }

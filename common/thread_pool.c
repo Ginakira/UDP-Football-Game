@@ -14,12 +14,20 @@
 #include "udp_epoll.h"
 
 extern int repollfd, bepollfd;
+extern struct User *rteam, *bteam;
 extern struct BallStatus ball_status;
+
+void send_all(struct FootBallMsg msg) {
+    for (int i = 0; i < MAX; i++) {
+        if (rteam[i].online) send(rteam[i].fd, (void *)&msg, sizeof(msg), 0);
+        if (bteam[i].online) send(bteam[i].fd, (void *)&msg, sizeof(msg), 0);
+    }
+}
 
 void do_echo(struct User *user) {
     struct FootBallMsg msg;
     char tmp[512] = {0};
-    int size = recv(user->fd, (void *)&msg, sizeof(msg), 0);
+    recv(user->fd, (void *)&msg, sizeof(msg), 0);
     user->flag = 10;
     if (msg.type & FT_ACK) {  // 客户端心跳回执
         if (user->team) {     // Blue Team

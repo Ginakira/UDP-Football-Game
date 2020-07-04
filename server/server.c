@@ -25,6 +25,7 @@ int port = 0;
 int repollfd, bepollfd;
 struct Bpoint ball;
 struct BallStatus ball_status;
+struct Score score;
 
 // struct Map court;
 
@@ -54,6 +55,7 @@ int main(int argc, char **argv) {
     court.height = atoi(get_value(conf, "LINES"));
     court.start.x = 3;
     court.start.y = 2;
+    court.gate_height = 9;
 
     ball.x = court.width / 2;
     ball.y = court.height / 2;
@@ -98,8 +100,8 @@ int main(int argc, char **argv) {
     ev.data.fd = listener;
 
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener, &ev);
-    struct sockaddr_in client;
-    socklen_t len = sizeof(client);
+    // struct sockaddr_in client;
+    // socklen_t len = sizeof(client);
 
     // 定时重绘
     signal(SIGALRM, re_draw);

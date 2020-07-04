@@ -93,4 +93,9 @@ struct BallStatus {
     // pthread_mutex_t mutex;
 };
 
+struct Score {
+    int red;
+    int blue;
+};
+
 #endif
