@@ -62,6 +62,16 @@ void w_gotoxy_puts(WINDOW *win, int x, int y, char *s) {
     return;
 }
 
+void show_help_message() {
+    w_gotoxy_puts(Help, 8, 1, "Help");
+    w_gotoxy_puts(Help, 3, 3, "W/A/S/D - Move");
+    w_gotoxy_puts(Help, 3, 4, "J - Stop ball");
+    w_gotoxy_puts(Help, 3, 5, "K - Kick ball");
+    w_gotoxy_puts(Help, 3, 6, "L - Carry ball");
+    wrefresh(Help);
+    return;
+}
+
 void init_football() {
     initscr();
     clear();
@@ -104,6 +114,7 @@ void init_football() {
 
 void *draw(void *arg) {
     init_football();
+    show_help_message();
     while (1) {
         sleep(10);
     }

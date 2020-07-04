@@ -54,6 +54,8 @@ void do_echo(struct User *user) {
             if (tmpx >= 0 && tmpx < court.width + 4) user->loc.x = tmpx;
             if (tmpy >= 0 && tmpy < court.height + 2) user->loc.y = tmpy;
         }
+
+        // 控球动作
         if (msg.ctl.action & ACTION_KICK) {
             show_data_stream('k');
             int ret = can_kick(&(user->loc), msg.ctl.strength);
@@ -64,6 +66,17 @@ void do_echo(struct User *user) {
                 ball_status.who = user->team;
                 strcpy(ball_status.name, user->name);
             }
+        } else if (msg.ctl.action & ACTION_STOP) {
+            show_data_stream('s');
+            int ret = can_access(&(user->loc));
+            if (ret) {
+                ball_status.who = user->team;
+                ball_status.v.x = ball_status.v.y = 0;
+                ball_status.a.x = ball_status.a.y = 0;
+            }
+            char buff[50] = {0};
+            sprintf(buff, "Can stop = %d", ret);
+            Show_Message(, , buff, 1);
         }
     }
     return;

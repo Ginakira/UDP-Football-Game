@@ -9,4 +9,6 @@
 #ifndef _SHOW_STRENGTH_H
 #define _SHOW_STRENGTH_H
 void show_strength();
+void stop_ball();
+void kick_ball();
 #endif

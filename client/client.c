@@ -174,6 +174,14 @@ int main(int argc, char **argv) {
             case '\r': {
                 send_chat();
             } break;
+            case 'j': {
+                stop_ball();
+            } break;
+            case 'k': {
+                kick_ball();
+            } break;
+            case 'l': {
+            } break;
             case ' ': {
                 show_strength();
             } break;

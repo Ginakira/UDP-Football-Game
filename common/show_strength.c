@@ -59,3 +59,22 @@ void show_strength() {
     make_block(STDIN_FILENO);
     return;
 }
+
+void stop_ball() {
+    struct FootBallMsg msg;
+    bzero(&msg, sizeof(msg));
+    msg.type = FT_CTL;
+    msg.ctl.action = ACTION_STOP;
+    send(sockfd, &msg, sizeof(msg), 0);
+    return;
+}
+
+void kick_ball() {
+    struct FootBallMsg msg;
+    bzero(&msg, sizeof(msg));
+    msg.type = FT_CTL;
+    msg.ctl.action = ACTION_KICK;
+    msg.ctl.strength = 1;
+    send(sockfd, &msg, sizeof(msg), 0);
+    return;
+}
