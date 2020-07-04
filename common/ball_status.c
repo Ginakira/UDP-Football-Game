@@ -30,7 +30,7 @@ int can_access(struct Point *loc) {
 }
 
 // 判断玩家是否可以踢球 如可以 更新球速、加速度 返回1 否则0
-int can_kick(struct Point *loc, int strength) {
+int can_kick(struct Point *loc, int strength, char *name) {
     // 因为球和人的坐标不在同一个窗口上(人可以出界) 所以先修正坐标
     int px = loc->x - 2, py = loc->y - 1;
 
@@ -40,6 +40,20 @@ int can_kick(struct Point *loc, int strength) {
     Show_Message(, , buff, 1);
 
     if (!can_access(loc)) return 0;  // 不在有效控球范围内
+
+    if (ball_status.is_carry) {                 // 处于带球状态
+        if (!strcmp(ball_status.name, name)) {  // 如果是带球者踢的
+            ball_status.is_carry = 0;
+        } else {  // 如果是他人抢断 则有75%机率抢断成功
+            int steal_success = (rand() % 4 < 3);
+            if (steal_success) {
+                ball_status.is_carry = 0;
+            } else {
+                return 0;
+            }
+        }
+    }
+
     double dis = pow(pow((int)ball.x - px, 2) + pow((int)ball.y - py, 2), 0.5);
     double dx = ((int)ball.x - px) / dis;
     double dy = ((int)ball.y - py) / dis;

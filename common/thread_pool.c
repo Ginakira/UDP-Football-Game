@@ -54,10 +54,15 @@ void do_echo(struct User *user) {
         int epollfd_tmp = (user->team ? bepollfd : repollfd);
         del_event(epollfd_tmp, user->fd);
         Show_Message(, NULL, tmp, 1);
-        ball_status.is_carry = 0;
+        if (!strcmp(ball_status.name, user->name)) {  // 下线用户为带球者
+            ball_status.is_carry = 0;
+        }
     } else if (msg.type & FT_CTL) {  // 客户端控制信息
         show_data_stream('n');
-        Show_Message(, user, "Ctrl Messgae", 0);
+        char buff2[50] = {0};
+        sprintf(buff2, "Ctrl Message: dirx=%d, diry=%d", msg.ctl.dirx,
+                msg.ctl.diry);
+        Show_Message(, user, buff2, 0);
         if (msg.ctl.dirx || msg.ctl.diry) {
             // 人-边界判断
             int tmpx = user->loc.x + msg.ctl.dirx,
@@ -69,14 +74,12 @@ void do_echo(struct User *user) {
         // 控球动作
         if (msg.ctl.action & ACTION_KICK) {  // 踢球
             show_data_stream('k');
-            int ret = can_kick(&(user->loc), msg.ctl.strength);
+            int ret = can_kick(&(user->loc), msg.ctl.strength, user->name);
             char buff[50] = {0};
             sprintf(buff, "Can kick = %d", ret);
             Show_Message(, , buff, 1);
             if (ret) {
-                ball_status.is_carry = 0;
                 ball_status.who = user->team;
-                strcpy(ball_status.name, user->name);
             }
         } else if (msg.ctl.action & ACTION_STOP) {  // 停球
             show_data_stream('s');
@@ -93,6 +96,18 @@ void do_echo(struct User *user) {
             show_data_stream('c');
             int ret = can_access(&(user->loc));
             if (ret) {
+                if (ball_status.is_carry &&
+                    strcmp(ball_status.name, user->name)) {
+                    // 处于带球状态且不是带球者发起的带球请求
+                    // 有50%机率抢断并带球成功
+                    int steal_success = (rand() % 4 < 2);
+                    if (steal_success) {
+                        ball_status.is_carry = 1;
+                    } else {
+                        return;
+                    }
+                }
+
                 ball_status.who = user->team;
                 ball_status.v.x = ball_status.v.y = 0;
                 ball_status.a.x = ball_status.a.y = 0;
