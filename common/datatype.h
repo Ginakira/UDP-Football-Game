@@ -9,7 +9,7 @@
 #ifndef _DATATYPE_H
 #define _DATATYPE_H
 
-#define MAXMSG 1024
+#define MAXMSG 2048
 
 struct LogRequest {
     char name[20];
@@ -33,8 +33,8 @@ struct Bpoint {
 struct User {
     int team;
     int fd;
-    int flag;  // 未响应的次数
-    int online;
+    int flag;    // 未响应的次数
+    int online;  // 1 - Online  0 - Offline
     char name[20];
     struct Point loc;
 };
@@ -88,7 +88,7 @@ struct BallStatus {
     struct Speed v;
     struct Aspeed a;
     int t;
-    int who;
+    int who;  // 哪队带球
     char name[20];
     int is_carry;
     struct Point relative_loc;  // 球与人相对位置（球坐标减人坐标）

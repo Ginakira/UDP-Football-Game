@@ -7,6 +7,7 @@
 ************************************************************/
 
 #include "game.h"
+#include "generate_json.h"
 #include "head.h"
 #include "thread_pool.h"
 #define MAX 50
@@ -160,6 +161,7 @@ void re_draw() {
     re_draw_ball();
     re_draw_team(rteam);
     re_draw_team(bteam);
+    send_court_json();
     re_draw_gate();
     wrefresh(Football_t);
     return;
