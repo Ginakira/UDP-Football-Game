@@ -115,11 +115,12 @@ void re_draw_ball() {
             if (ball_in_gate) {  // 左蓝队门 右红队门
                 if (ball.x < 0) {
                     score.red++;
+                    send_score_json("red");
                 } else {
                     score.blue++;
+                    send_score_json("blue");
                 }
                 re_draw_score();
-                send_score_json();
                 Show_Message(, , "Goal!!!!!!", 1);
                 struct FootBallMsg msg;
                 bzero(&msg, sizeof(msg));

@@ -53,8 +53,8 @@ void show_strength() {
     struct FootBallMsg msg;
     bzero(&msg, sizeof(msg));
     msg.type = FT_CTL;
-    msg.ctl.action = ACTION_KICK;
-    msg.ctl.strength = arr[mousex / (maxx / 5)];
+    msg.ctrl.action = ACTION_KICK;
+    msg.ctrl.strength = arr[mousex / (maxx / 5)];
     send(sockfd, &msg, sizeof(msg), 0);
     make_block(STDIN_FILENO);
     return;
@@ -64,7 +64,7 @@ void stop_ball() {
     struct FootBallMsg msg;
     bzero(&msg, sizeof(msg));
     msg.type = FT_CTL;
-    msg.ctl.action = ACTION_STOP;
+    msg.ctrl.action = ACTION_STOP;
     send(sockfd, &msg, sizeof(msg), 0);
     return;
 }
@@ -73,8 +73,8 @@ void kick_ball() {
     struct FootBallMsg msg;
     bzero(&msg, sizeof(msg));
     msg.type = FT_CTL;
-    msg.ctl.action = ACTION_KICK;
-    msg.ctl.strength = 1;
+    msg.ctrl.action = ACTION_KICK;
+    msg.ctrl.strength = 1;
     send(sockfd, &msg, sizeof(msg), 0);
     return;
 }
@@ -83,7 +83,7 @@ void carry_ball() {
     struct FootBallMsg msg;
     bzero(&msg, sizeof(msg));
     msg.type = FT_CTL;
-    msg.ctl.action = ACTION_CARRY;
+    msg.ctrl.action = ACTION_CARRY;
     send(sockfd, &msg, sizeof(msg), 0);
     return;
 }

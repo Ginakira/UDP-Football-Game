@@ -36,7 +36,7 @@ void *client_recv(void *arg) {
             endwin();
             exit(0);
         } else if (msg.type & FT_GAME) {  // 服务端画面信息
-            // DBG(L_BLUE "Received a court json: %s" NONE "\n", msg.msg);
+            DBG(L_BLUE "Received a court json: %s" NONE "\n", msg.msg);
             re_draw_court(msg.msg);
         } else if (msg.type & FT_SCORE) {  // 得分信息
             DBG(L_BLUE "Received a score json: %s" NONE "\n", msg.msg);

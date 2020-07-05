@@ -10,6 +10,6 @@
 #define _GENERATE_JSON_H
 
 void send_court_json();
-void send_score_json();
+void send_score_json(const char *team_name);
 
 #endif

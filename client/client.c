@@ -161,16 +161,16 @@ int main(int argc, char **argv) {
         int c = getchar();
         switch (c) {
             case 'a': {
-                ctl_msg.ctl.dirx -= 1;
+                ctl_msg.ctrl.dirx -= 1;
             } break;
             case 'd': {
-                ctl_msg.ctl.dirx += 1;
+                ctl_msg.ctrl.dirx += 1;
             } break;
             case 'w': {
-                ctl_msg.ctl.diry -= 1;
+                ctl_msg.ctrl.diry -= 1;
             } break;
             case 's': {
-                ctl_msg.ctl.diry += 1;
+                ctl_msg.ctrl.diry += 1;
             } break;
             case '\r': {
                 send_chat();

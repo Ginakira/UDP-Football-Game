@@ -72,7 +72,7 @@ struct FootBallMsg {
     int size;
     int team;
     char name[20];
-    struct Ctrl ctl;
+    struct Ctrl ctrl;
     char msg[MAXMSG];
 };
 

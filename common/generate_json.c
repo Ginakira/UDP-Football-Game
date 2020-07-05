@@ -29,9 +29,9 @@ void send_court_json() {
 }
 
 // 发送得分信息json
-void send_score_json() {
+void send_score_json(const char* team_name) {
     pthread_t tid;
-    pthread_create(&tid, NULL, generate_score_json, NULL);
+    pthread_create(&tid, NULL, generate_score_json, (void*)team_name);
     return;
 }
 
@@ -98,8 +98,8 @@ void* generate_court_json(void* arg) {
     cJSON* name = cJSON_AddStringToObject(ball_obj, "name", ball_status.name);
     if (name == NULL) return NULL;
     // 球坐标
-    cJSON* x = cJSON_AddNumberToObject(ball_obj, "x", ball.x);
-    cJSON* y = cJSON_AddNumberToObject(ball_obj, "y", ball.y);
+    cJSON* x = cJSON_AddNumberToObject(ball_obj, "x", (int)ball.x);
+    cJSON* y = cJSON_AddNumberToObject(ball_obj, "y", (int)ball.y);
     if (x == NULL || y == NULL) return NULL;
 
     // 广播给客户端
@@ -122,8 +122,9 @@ void* generate_court_json(void* arg) {
             "red": 2,
             "blue": 3
         },
-        "who": 0, // 进球方
+        "who": "red", // 进球方
         "name": "sakata", // 进球者
+        “score_get": "blue" // 得分方
     }
 *****************************************/
 void* generate_score_json(void* arg) {
@@ -139,9 +140,12 @@ void* generate_score_json(void* arg) {
     cJSON* blue_score =
         cJSON_AddNumberToObject(score_detail, "blue", score.blue);
     if (red_score == NULL || blue_score == NULL) return NULL;
-    cJSON* who = cJSON_AddNumberToObject(score_obj, "who", ball_status.who);
+    cJSON* who = cJSON_AddStringToObject(score_obj, "who",
+                                         (ball_status.who ? "blue" : "red"));
     cJSON* name = cJSON_AddStringToObject(score_obj, "name", ball_status.name);
-    if (who == NULL || name == NULL) return NULL;
+    cJSON* score_get =
+        cJSON_AddStringToObject(score_obj, "score_get", (const char*)arg);
+    if (who == NULL || name == NULL || score_get == NULL) return NULL;
 
     // 广播给客户端
     struct FootBallMsg msg;
