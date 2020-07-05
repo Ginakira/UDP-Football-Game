@@ -17,6 +17,7 @@ extern int port;
 extern struct User *rteam;
 extern struct User *bteam;
 extern int repollfd, bepollfd;
+extern struct Map court;
 
 void add_event(int epollfd, int fd, int events) {
     struct epoll_event ev;
@@ -113,6 +114,8 @@ int udp_accept(int epollfd, int fd, struct User *user) {
     user->team = request.team;
     new_fd = udp_connect(epollfd, &client);
     user->fd = new_fd;
+    user->loc.x = rand() % (court.width + 4);
+    user->loc.y = rand() % (court.height + 2);
     return new_fd;
 }
 
