@@ -9,7 +9,7 @@
 #ifndef _DATATYPE_H
 #define _DATATYPE_H
 
-#define MAXMSG 1024
+#define MAXMSG 2048
 
 struct LogRequest {
     char name[20];
@@ -26,11 +26,15 @@ struct Point {
     int x, y;
 };
 
+struct Bpoint {
+    double x, y;
+};
+
 struct User {
     int team;
     int fd;
-    int flag;  // 未响应的次数
-    int online;
+    int flag;    // 未响应的次数
+    int online;  // 1 - Online  0 - Offline
     char name[20];
     struct Point loc;
 };
@@ -43,11 +47,14 @@ struct Map {
     int gate_height;
 };
 
+#define ACTION_KICK 0x01
+#define ACTION_CARRY 0x02
+#define ACTION_STOP 0x04
 struct Ctrl {
-    int carry;
-    int kick;
+    int action;
     int dirx;
     int diry;
+    int strength;
 };
 
 #define FT_TEST 0x01   // 服务端发送的心跳信息
@@ -67,6 +74,30 @@ struct FootBallMsg {
     char name[20];
     struct Ctrl ctl;
     char msg[MAXMSG];
+};
+
+struct Aspeed {
+    double x, y;
+};
+
+struct Speed {
+    double x, y;
+};
+
+struct BallStatus {
+    struct Speed v;
+    struct Aspeed a;
+    int t;
+    int who;  // 哪队带球
+    char name[20];
+    int is_carry;
+    struct Point relative_loc;  // 球与人相对位置（球坐标减人坐标）
+    // pthread_mutex_t mutex;
+};
+
+struct Score {
+    int red;
+    int blue;
 };
 
 #endif

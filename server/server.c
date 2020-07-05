@@ -11,6 +11,7 @@
 #include "../common/heart_beat.h"
 #include "../common/server_exit.h"
 #include "../common/server_re_draw.h"
+#include "../common/show_data_stream.h"
 #include "../common/sub_reactor.h"
 #include "../common/thread_pool.h"
 #include "../common/udp_epoll.h"
@@ -22,6 +23,9 @@ struct User *rteam;
 struct User *bteam;
 int port = 0;
 int repollfd, bepollfd;
+struct Bpoint ball;
+struct BallStatus ball_status;
+struct Score score;
 
 // struct Map court;
 
@@ -49,8 +53,12 @@ int main(int argc, char **argv) {
     if (!port) port = atoi(get_value(conf, "PORT"));
     court.width = atoi(get_value(conf, "COLS"));
     court.height = atoi(get_value(conf, "LINES"));
-    court.start.x = 1;
-    court.start.y = 1;
+    court.start.x = 3;
+    court.start.y = 2;
+    court.gate_height = 9;
+
+    ball.x = court.width / 2;
+    ball.y = court.height / 2;
 
     rteam = (struct User *)calloc(MAX, sizeof(struct User));
     bteam = (struct User *)calloc(MAX, sizeof(struct User));
@@ -92,16 +100,16 @@ int main(int argc, char **argv) {
     ev.data.fd = listener;
 
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener, &ev);
-    struct sockaddr_in client;
-    socklen_t len = sizeof(client);
+    // struct sockaddr_in client;
+    // socklen_t len = sizeof(client);
 
     // 定时重绘
     signal(SIGALRM, re_draw);
 
     struct itimerval itimer;
     itimer.it_interval.tv_sec = 0;
-    itimer.it_interval.tv_usec = 50000;
-    itimer.it_value.tv_sec = 5;
+    itimer.it_interval.tv_usec = 100000;
+    itimer.it_value.tv_sec = 2;
     itimer.it_value.tv_usec = 0;
     setitimer(ITIMER_REAL, &itimer, NULL);
 
@@ -113,6 +121,7 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < nfds; ++i) {
             struct User user;
+            bzero(&user, sizeof(user));
             char buff[512] = {0};
             DBG(YELLOW "EPOLL" NONE " : Doing with %dth fd\n", i);
             if (events[i].data.fd == listener) {
@@ -123,6 +132,12 @@ int main(int argc, char **argv) {
                                " : Add %s to %s sub_reactor.\n",
                         user.name, (user.team ? "BLUE" : "RED"));
                     add_to_sub_reactor(&user);
+                    show_data_stream('l');
+                    Show_Message(, , buff, 1);
+
+                    char buff[100] = {0};
+                    sprintf(buff, "[INIT] ballx=%d bally=%d", (int)ball.x,
+                            (int)ball.y);
                     Show_Message(, , buff, 1);
                 }
             } else {

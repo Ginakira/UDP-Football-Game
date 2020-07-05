@@ -11,6 +11,7 @@
 #include "../common/head.h"
 #include "../common/send_chat.h"
 #include "../common/send_ctl.h"
+#include "../common/show_strength.h"
 #include "../common/udp_client.h"
 
 char server_ip[20] = {0};
@@ -80,8 +81,8 @@ int main(int argc, char **argv) {
 
     court.width = atoi(get_value(conf, "COLS"));
     court.height = atoi(get_value(conf, "LINES"));
-    court.start.x = 1;
-    court.start.y = 1;
+    court.start.x = 3;
+    court.start.y = 2;
 
     signal(SIGINT, logout);
 
@@ -159,10 +160,10 @@ int main(int argc, char **argv) {
         int c = getchar();
         switch (c) {
             case 'a': {
-                ctl_msg.ctl.dirx -= 2;
+                ctl_msg.ctl.dirx -= 1;
             } break;
             case 'd': {
-                ctl_msg.ctl.dirx += 2;
+                ctl_msg.ctl.dirx += 1;
             } break;
             case 'w': {
                 ctl_msg.ctl.diry -= 1;
@@ -172,6 +173,18 @@ int main(int argc, char **argv) {
             } break;
             case '\r': {
                 send_chat();
+            } break;
+            case 'j': {
+                stop_ball();
+            } break;
+            case 'k': {
+                kick_ball();
+            } break;
+            case 'l': {
+                carry_ball();
+            } break;
+            case ' ': {
+                show_strength();
             } break;
             default:
                 break;

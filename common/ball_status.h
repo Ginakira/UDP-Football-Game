@@ -1,13 +1,15 @@
 /************************************************************
-    File Name : server_re_draw.h
+    File Name : ball_status.h
     Author: Ginakira
     Mail: ginakira@outlook.com
     Github: https://github.com/Ginakira
-    Created Time: 2020/06/14 20:29:27
+    Created Time: 2020/07/02 18:17:43
 ************************************************************/
 
-#ifndef _SERVER_RE_DRAW_H
-#define _SERVER_RE_DRAW_H
-void re_draw();
-void re_draw_score();
+#ifndef _BALL_STATUS_H
+#define _BALL_STATUS_H
+
+int can_access(struct Point *loc);
+int can_kick(struct Point *loc, int strength, char *name);
+
 #endif

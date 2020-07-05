@@ -1,13 +1,15 @@
 /************************************************************
-    File Name : server_re_draw.h
+    File Name : generate_json.h
     Author: Ginakira
     Mail: ginakira@outlook.com
     Github: https://github.com/Ginakira
-    Created Time: 2020/06/14 20:29:27
+    Created Time: 2020/07/05 15:09:22
 ************************************************************/
 
-#ifndef _SERVER_RE_DRAW_H
-#define _SERVER_RE_DRAW_H
-void re_draw();
-void re_draw_score();
+#ifndef _GENERATE_JSON_H
+#define _GENERATE_JSON_H
+
+void send_court_json();
+void send_score_json();
+
 #endif

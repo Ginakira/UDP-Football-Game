@@ -8,15 +8,27 @@
 
 #include "thread_pool.h"
 
+#include "ball_status.h"
 #include "game.h"
+#include "show_data_stream.h"
 #include "udp_epoll.h"
 
 extern int repollfd, bepollfd;
+extern struct User *rteam, *bteam;
+extern struct Bpoint ball;
+extern struct BallStatus ball_status;
+
+void send_all(struct FootBallMsg msg) {
+    for (int i = 0; i < MAX; i++) {
+        if (rteam[i].online) send(rteam[i].fd, (void *)&msg, sizeof(msg), 0);
+        if (bteam[i].online) send(bteam[i].fd, (void *)&msg, sizeof(msg), 0);
+    }
+}
 
 void do_echo(struct User *user) {
     struct FootBallMsg msg;
     char tmp[512] = {0};
-    int size = recv(user->fd, (void *)&msg, sizeof(msg), 0);
+    recv(user->fd, (void *)&msg, sizeof(msg), 0);
     user->flag = 10;
     if (msg.type & FT_ACK) {  // 客户端心跳回执
         if (user->team) {     // Blue Team
@@ -35,20 +47,85 @@ void do_echo(struct User *user) {
         Show_Message(, user, msg.msg, );
         send(user->fd, (void *)&msg, sizeof(msg), 0);
     } else if (msg.type & FT_FIN) {  // 客户端下线信息
+        show_data_stream('e');
         DBG(RED "%s logout" NONE "\n", user->name);
         sprintf(tmp, "%s logout!", user->name);
         user->online = 0;
         int epollfd_tmp = (user->team ? bepollfd : repollfd);
         del_event(epollfd_tmp, user->fd);
         Show_Message(, NULL, tmp, 1);
+        if (!strcmp(ball_status.name, user->name)) {  // 下线用户为带球者
+            ball_status.is_carry = 0;
+        }
     } else if (msg.type & FT_CTL) {  // 客户端控制信息
-        Show_Message(, user, "Ctrl Messgae", 0);
-        if (!msg.ctl.dirx && !msg.ctl.diry) return;
-        // 边界判断
-        int tmpx = user->loc.x + msg.ctl.dirx,
-            tmpy = user->loc.y + msg.ctl.diry;
-        if (tmpx > 0 && tmpx < court.width - 1) user->loc.x = tmpx;
-        if (tmpy > 0 && tmpy < court.height - 1) user->loc.y = tmpy;
+        show_data_stream('n');
+        char buff2[50] = {0};
+        sprintf(buff2, "Ctrl Message: dirx=%d, diry=%d", msg.ctl.dirx,
+                msg.ctl.diry);
+        Show_Message(, user, buff2, 0);
+        if (msg.ctl.dirx || msg.ctl.diry) {
+            // 人-边界判断
+            int tmpx = user->loc.x + msg.ctl.dirx,
+                tmpy = user->loc.y + msg.ctl.diry;
+            if (tmpx >= 0 && tmpx < court.width + 4) user->loc.x = tmpx;
+            if (tmpy >= 0 && tmpy < court.height + 2) user->loc.y = tmpy;
+        }
+
+        // 控球动作
+        if (msg.ctl.action & ACTION_KICK) {  // 踢球
+            show_data_stream('k');
+            int ret = can_kick(&(user->loc), msg.ctl.strength, user->name);
+            char buff[50] = {0};
+            sprintf(buff, "Can kick = %d", ret);
+            Show_Message(, , buff, 1);
+            if (ret) {
+                ball_status.who = user->team;
+            }
+        } else if (msg.ctl.action & ACTION_STOP) {  // 停球
+            show_data_stream('s');
+            int ret = can_access(&(user->loc));
+            if (ret) {
+                ball_status.who = user->team;
+                ball_status.v.x = ball_status.v.y = 0;
+                ball_status.a.x = ball_status.a.y = 0;
+            }
+            char buff[50] = {0};
+            sprintf(buff, "Can stop = %d", ret);
+            Show_Message(, , buff, 1);
+        } else if (msg.ctl.action & ACTION_CARRY) {  // 带球
+            show_data_stream('c');
+            int ret = can_access(&(user->loc));
+            if (ret) {
+                if (ball_status.is_carry &&
+                    strcmp(ball_status.name, user->name)) {
+                    // 处于带球状态且不是带球者发起的带球请求
+                    // 有50%机率抢断并带球成功
+                    int steal_success = (rand() % 4 < 2);
+                    if (steal_success) {
+                        ball_status.is_carry = 1;
+                    } else {
+                        return;
+                    }
+                }
+
+                ball_status.who = user->team;
+                ball_status.v.x = ball_status.v.y = 0;
+                ball_status.a.x = ball_status.a.y = 0;
+                strcpy(ball_status.name, user->name);
+                ball_status.is_carry = 1;
+                // 因为在带球重绘时也需要坐标修正 所以在这里直接修正差值
+                // 两项相消了 如 ball.x - (user->loc.x - 2) + 2;
+                ball_status.relative_loc.x = ball.x - user->loc.x;
+                ball_status.relative_loc.y = ball.y - user->loc.y;
+            }
+            char buff[100] = {0};
+            sprintf(
+                buff,
+                "Can carry = %d, is_carry=%d, rela_x=%d, rela_y=%d, carrier=%s",
+                ret, ball_status.is_carry, ball_status.relative_loc.x,
+                ball_status.relative_loc.y, ball_status.name);
+            Show_Message(, , buff, 1);
+        }
     }
     return;
 }

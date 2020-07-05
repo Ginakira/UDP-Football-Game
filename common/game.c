@@ -8,8 +8,10 @@
 
 #include "game.h"
 
+#include "server_re_draw.h"
+
 extern struct Map court;
-extern WINDOW *Football, *Message, *Help, *Score, *Write;
+extern WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
 int message_num = 0;
 
 WINDOW *create_newwin(int width, int height, int start_x, int start_y) {
@@ -62,6 +64,16 @@ void w_gotoxy_puts(WINDOW *win, int x, int y, char *s) {
     return;
 }
 
+void show_help_message() {
+    w_gotoxy_puts(Help, 8, 1, "Help");
+    w_gotoxy_puts(Help, 3, 3, "W/A/S/D - Move");
+    w_gotoxy_puts(Help, 3, 4, "J - Stop ball");
+    w_gotoxy_puts(Help, 3, 5, "K - Kick ball");
+    w_gotoxy_puts(Help, 3, 6, "L - Carry ball");
+    wrefresh(Help);
+    return;
+}
+
 void init_football() {
     initscr();
     clear();
@@ -76,25 +88,35 @@ void init_football() {
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     init_pair(5, COLOR_CYAN, COLOR_BLACK);
     init_pair(6, COLOR_BLUE, COLOR_BLACK);
+    init_pair(7, COLOR_BLACK, COLOR_GREEN);
+    init_pair(8, COLOR_BLACK, COLOR_RED);
+    init_pair(9, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(10, COLOR_BLACK, COLOR_CYAN);
+    init_pair(11, COLOR_BLACK, COLOR_BLUE);
+    init_pair(12, COLOR_BLACK, COLOR_MAGENTA);
 
-    Football =
-        create_newwin(court.width, court.height, court.start.x, court.start.y);
-    WINDOW *Message_t = create_newwin(court.width, 7, court.start.x,
-                                      court.start.y + court.height);
-    Message = subwin(Message_t, 5, court.width - 2,
-                     court.start.y + court.height + 1, court.start.x + 1);
+    Football_t = create_newwin(court.width + 4, court.height + 2,
+                               court.start.x - 2, court.start.y - 1);
+    Football = subwin(Football_t, court.height, court.width, court.start.y,
+                      court.start.x);
+    box(Football, 0, 0);
+    WINDOW *Message_t = create_newwin(court.width + 4, 7, court.start.x - 2,
+                                      court.start.y + court.height + 1);
+    Message = subwin(Message_t, 5, court.width + 2,
+                     court.start.y + court.height + 2, court.start.x - 1);
     scrollok(Message, 1);
-    Help = create_newwin(20, court.height, court.start.x + court.width,
-                         court.start.y);
-    Score = create_newwin(20, 7, court.start.x + court.width,
-                          court.start.y + court.height);
-    Write = create_newwin(court.width + 20, 5, court.start.x,
-                          court.start.y + court.height + 7);
+    Help = create_newwin(20, court.height + 2, court.start.x + court.width + 2,
+                         court.start.y - 1);
+    Score = create_newwin(20, 7, court.start.x + court.width + 2,
+                          court.start.y + court.height + 1);
+    Write = create_newwin(court.width + 24, 5, court.start.x - 2,
+                          court.start.y + court.height + 8);
     return;
 }
 
 void *draw(void *arg) {
     init_football();
+    show_help_message();
     while (1) {
         sleep(10);
     }

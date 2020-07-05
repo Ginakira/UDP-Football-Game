@@ -18,7 +18,7 @@ void *sub_reactor(void *arg) {
     for (int i = 0; i < MAXTHREAD; ++i) {
         pthread_create(&tid[i], NULL, thread_run, (void *)taskQueue);
     }
-    struct epoll_event ev, events[MAX];
+    struct epoll_event events[MAX];
     int nfds;
     while (1) {
         DBG(RED "Sub Reactor : " NONE "Epoll waiting...\n");
