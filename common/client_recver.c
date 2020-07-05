@@ -15,6 +15,7 @@ extern int sockfd;
 
 void *client_recv(void *arg) {
     while (1) {
+        curs_set(0);
         struct FootBallMsg msg;
         struct User user;
         bzero(&msg, sizeof(msg));

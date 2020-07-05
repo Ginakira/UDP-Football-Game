@@ -157,6 +157,7 @@ void re_draw_gate() {
 }
 
 void re_draw() {
+    curs_set(0);
     werase(Football_t);
     box(Football_t, 0, 0);
     box(Football, 0, 0);
