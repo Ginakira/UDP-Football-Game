@@ -9,5 +9,5 @@
 #ifndef _CLIENT_RE_DRAW_H
 #define _CLIENT_RE_DRAW_H
 void re_draw_court(const char* const court_json);
-void re_draw_score();
+void re_draw_score(const char* const score_json);
 #endif

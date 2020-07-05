@@ -112,13 +112,14 @@ void re_draw_ball() {
             // 球是否在门的范围内
             int ball_in_gate = (ball.y >= gate_start_y &&
                                 ball.y <= gate_start_y + court.gate_height);
-            if (ball_in_gate) {
+            if (ball_in_gate) {  // 左蓝队门 右红队门
                 if (ball.x < 0) {
-                    score.blue++;
-                } else {
                     score.red++;
+                } else {
+                    score.blue++;
                 }
                 re_draw_score();
+                send_score_json();
                 Show_Message(, , "Goal!!!!!!", 1);
                 struct FootBallMsg msg;
                 bzero(&msg, sizeof(msg));

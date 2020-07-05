@@ -83,6 +83,7 @@ int main(int argc, char **argv) {
     court.height = atoi(get_value(conf, "LINES"));
     court.start.x = 3;
     court.start.y = 2;
+    court.gate_height = 9;
 
     signal(SIGINT, logout);
 

@@ -15,6 +15,7 @@
 extern struct User *rteam, *bteam;
 extern struct Bpoint ball;
 extern struct BallStatus ball_status;
+extern struct Score score;
 
 void* generate_court_json(void* arg);
 void* generate_score_json(void* arg);
@@ -35,6 +36,31 @@ void send_score_json() {
 }
 
 // 生成球场画面json
+/*****************************************
+    格式：
+    {
+        "red": [ // 红队队员信息
+            {
+                "name": "sakata",
+                "x": 3,
+                "y": 2
+            }, ...
+        ],
+        "blue": [ // 蓝队队员信息
+            "name": "sakata",
+                "x": 3,
+                "y": 2
+            }, ...
+        ],
+        "ball": { // 球信息
+            "is_carry": 0,
+            "who": 1,
+            "name": "sakata",
+            "x": 7.243,
+            "y": 103.45
+        }
+    }
+*****************************************/
 void* generate_court_json(void* arg) {
     pthread_t tid = pthread_self();
     pthread_detach(tid);
@@ -93,9 +119,43 @@ void* generate_court_json(void* arg) {
 }
 
 // 生成得分信息json
+/*****************************************
+    格式：
+    {
+        "score": {
+            "red": 2,
+            "blue": 3
+        },
+        "who": 0, // 进球方
+        "name": "sakata", // 进球者
+    }
+*****************************************/
 void* generate_score_json(void* arg) {
     pthread_t tid = pthread_self();
     pthread_detach(tid);
+
+    cJSON* score_obj = cJSON_CreateObject();
+    if (score_obj == NULL) return NULL;
+
+    cJSON* score_detail = cJSON_AddObjectToObject(score_obj, "score");
+    if (score_detail == NULL) return NULL;
+    cJSON* red_score = cJSON_AddNumberToObject(score_detail, "red", score.red);
+    cJSON* blue_score =
+        cJSON_AddNumberToObject(score_detail, "blue", score.blue);
+    if (red_score == NULL || blue_score == NULL) return NULL;
+    cJSON* who = cJSON_AddNumberToObject(score_obj, "who", ball_status.who);
+    cJSON* name = cJSON_AddStringToObject(score_obj, "name", ball_status.name);
+    if (who == NULL || name == NULL) return NULL;
+
+    // 广播给客户端
+    struct FootBallMsg msg;
+    bzero(&msg, sizeof(msg));
+    msg.type = FT_SCORE;
+    strcpy(msg.msg, cJSON_Print(score_obj));
+    DBG(L_BLUE "Sended score json:%s" NONE "\n", msg.msg);
+
+    send_all(msg);
+    cJSON_Delete(score_obj);
     return NULL;
 }
 
