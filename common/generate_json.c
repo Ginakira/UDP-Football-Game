@@ -39,11 +39,11 @@ void* generate_court_json(void* arg) {
     pthread_t tid = pthread_self();
     pthread_detach(tid);
     // 声明最终发送的json对象
-    cJSON* court_json = cJSON_CreateObject();
-    if (court_json == NULL) return NULL;
+    cJSON* court_obj = cJSON_CreateObject();
+    if (court_obj == NULL) return NULL;
 
     // 红队数组
-    cJSON* red = cJSON_AddArrayToObject(court_json, "red");
+    cJSON* red = cJSON_AddArrayToObject(court_obj, "red");
     if (red == NULL) return NULL;
     for (int i = 0; i < MAX; ++i) {
         if (!rteam[i].online) continue;
@@ -53,17 +53,17 @@ void* generate_court_json(void* arg) {
     }
 
     // 蓝队数组
-    cJSON* blue = cJSON_AddArrayToObject(court_json, "blue");
+    cJSON* blue = cJSON_AddArrayToObject(court_obj, "blue");
     if (blue == NULL) return NULL;
     for (int i = 0; i < MAX; ++i) {
         if (!bteam[i].online) continue;
         cJSON* player = generate_player_json(&bteam[i]);
         if (player == NULL) return NULL;
-        cJSON_AddItemToArray(red, player);
+        cJSON_AddItemToArray(blue, player);
     }
 
     // 球
-    cJSON* ball_obj = cJSON_AddObjectToObject(court_json, "ball");
+    cJSON* ball_obj = cJSON_AddObjectToObject(court_obj, "ball");
     if (ball_obj == NULL) return NULL;
     // 是否正被带球
     cJSON* is_carry =
@@ -84,10 +84,11 @@ void* generate_court_json(void* arg) {
     struct FootBallMsg msg;
     bzero(&msg, sizeof(msg));
     msg.type = FT_GAME;
-    strcpy(msg.msg, cJSON_Print(court_json));
+    strcpy(msg.msg, cJSON_Print(court_obj));
     DBG(L_BLUE "Sended court json:%s" NONE "\n", msg.msg);
 
     send_all(msg);
+    cJSON_Delete(court_obj);
     return NULL;
 }
 

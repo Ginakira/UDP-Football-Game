@@ -6,6 +6,7 @@
     Created Time: 2020/06/13 14:13:25
 ************************************************************/
 
+#include "client_re_draw.h"
 #include "common.h"
 #include "game.h"
 #include "head.h"
@@ -34,6 +35,9 @@ void *client_recv(void *arg) {
             DBG(GREEN "Server is going to stop!" NONE "\n");
             endwin();
             exit(0);
+        } else if (msg.type & FT_GAME) {  // 服务端画面信息
+            DBG(L_BLUE "Received a court json: %s" NONE "\n", msg.msg);
+            re_draw_court(msg.msg);
         } else {
             DBG(GREEN "Server Msg : " NONE "⚠️Unsupported message type.\n");
         }
