@@ -53,7 +53,6 @@ void send_score_json() {
             }, ...
         ],
         "ball": { // 球信息
-            "is_carry": 0,
             "who": 1,
             "name": "sakata",
             "x": 7.243,
@@ -91,12 +90,9 @@ void* generate_court_json(void* arg) {
     // 球
     cJSON* ball_obj = cJSON_AddObjectToObject(court_obj, "ball");
     if (ball_obj == NULL) return NULL;
-    // 是否正被带球
-    cJSON* is_carry =
-        cJSON_AddNumberToObject(ball_obj, "is_carry", ball_status.is_carry);
-    if (is_carry == NULL) return NULL;
     // 哪队带球
-    cJSON* who = cJSON_AddNumberToObject(ball_obj, "who", ball_status.who);
+    // cJSON* who = cJSON_AddNumberToObject(ball_obj, "who", ball_status.who);
+    cJSON* who = cJSON_AddStringToObject(ball_obj, "who", "red");
     if (who == NULL) return NULL;
     // 带球者
     cJSON* name = cJSON_AddStringToObject(ball_obj, "name", ball_status.name);

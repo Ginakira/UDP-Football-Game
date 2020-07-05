@@ -19,7 +19,7 @@ void show_strength() {
         if (i < maxx / 5 || i > maxx - maxx / 5) {
             wattron(Write, COLOR_PAIR(7));
         } else if ((i < (maxx / 5) * 2) || i > (maxx / 5) * 3) {
-            wattron(Write, COLOR_PAIR(12));
+            wattron(Write, COLOR_PAIR(9));
         } else {
             wattron(Write, COLOR_PAIR(8));
         }
