@@ -4,9 +4,13 @@
 
 ## 游戏演示
 
-客户端效果：![client](https://i.loli.net/2021/08/17/HRhOLKpu7EXtICG.png)
+客户端效果：
 
-服务端效果：![server](https://i.loli.net/2021/08/17/Hov8OQR1ILJZX6b.png)
+![client](https://i.loli.net/2021/08/17/HRhOLKpu7EXtICG.png)
+
+服务端效果：
+
+![server](https://i.loli.net/2021/08/17/Hov8OQR1ILJZX6b.png)
 
 ## 编译
 
